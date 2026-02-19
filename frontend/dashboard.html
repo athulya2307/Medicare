@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Medicare</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dashboard-page">
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner">
+            <i class="fas fa-heartbeat fa-pulse"></i>
+            <span>Loading your health data...</span>
+        </div>
+    </div>
+
+    <nav class="navbar dashboard-nav" id="dashboardNav" style="display: none;">
+    <div class="nav-container">
+        <!-- LEFT -->
+        <div class="nav-logo">
+            <img src="logo.jpeg" alt="Medicare Logo" height="30px" width="30px">
+            <span>Medicare</span>
+        </div>
+        
+        <!-- CENTER -->
+        <div class="nav-center">
+            <span id="userName">Welcome back!</span>
+        </div>
+        
+        <!-- RIGHT -->
+        <div class="nav-right">
+            <button class="btn-logout" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+
+
+    <div class="dashboard-container" id="dashboardContainer" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="sidebar-link active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="doctor-booking.html" class="sidebar-link">
+                    <i class="fas fa-user-md"></i>
+                    <span>Doctor Booking</span>
+                </a>
+                <a href="reminders.html" class="sidebar-link">
+                    <i class="fas fa-bell"></i>
+                    <span>Reminders</span>
+                </a>
+                <a href="report-analysis.html" class="sidebar-link">
+                    <i class="fas fa-file-medical"></i>
+                    <span>Report Analysis</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Onboarding for New Users -->
+            <section class="onboarding-section" id="onboardingSection">
+                <div class="onboarding-card">
+                    <div class="onboarding-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h2>Welcome to Medicare! 👋</h2>
+                    <p class="onboarding-subtitle">Let's get started by adding your first health metrics. This helps us give you personalized insights.</p>
+                    
+                    <form id="onboardingForm" class="metrics-form onboarding-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Weight <span class="required">*</span></label>
+                                <input type="number" step="0.1" min="20" max="300" name="weight" placeholder="72.5" required>
+                                <small>kg</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Height <span class="required">*</span></label>
+                                <input type="number" step="0.1" min="50" max="250" name="height" placeholder="170" required>
+                                <small>cm</small>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Blood Sugar</label>
+                                <input type="number" step="0.1" min="0" max="500" name="blood_sugar" placeholder="95">
+                                <small>mg/dL</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Cholesterol</label>
+                                <input type="number" step="0.1" min="0" max="500" name="cholesterol" placeholder="180">
+                                <small>mg/dL</small>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Systolic BP</label>
+                                <input type="number" min="50" max="250" name="bp_systolic" placeholder="120">
+                                <small>mmHg</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Diastolic BP</label>
+                                <input type="number" min="30" max="150" name="bp_diastolic" placeholder="80">
+                                <small>mmHg</small>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary full-width btn-large">
+                            <i class="fas fa-check"></i>
+                            Save My First Metrics
+                        </button>
+                    </form>
+                    
+                    <div class="onboarding-footer">
+                        <small>We'll calculate your BMI automatically</small>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Health Metrics Dashboard (Existing Users / After Onboarding) -->
+            <section class="metrics-section" id="metricsSection" style="display: none;">
+                <div class="section-header">
+                    <h2>Your Health at a Glance</h2>
+                    <div class="metrics-header-actions">
+                        <span class="last-updated" id="lastUpdated"></span>
+                        <button class="btn-primary" id="updateMetricsBtn">
+                            <i class="fas fa-plus"></i> Update Metrics
+                        </button>
+                    </div>
+                </div>
+                <div class="metrics-grid" id="metricsGrid">
+                    <!-- Dynamic metrics loaded by JS -->
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="quick-actions">
+                <h2>Quick Actions</h2>
+                <div class="actions-grid">
+                    <a href="doctor-booking.html" class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <h3>Find Doctors</h3>
+                        <p>Search nearby hospitals (2km, 5km, 10km radius)</p>
+                    </a>
+                    <a href="reminders.html" class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <h3>Set Reminders</h3>
+                        <p>Medication, water, appointments & checkups</p>
+                    </a>
+                    <a href="report-analysis.html" class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <h3>Analyze Reports</h3>
+                        <p>Upload PDFs/images for AI-powered insights</p>
+                    </a>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Update Metrics Modal (Existing Users) -->
+    <div class="modal-overlay" id="metricsModal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>Update Health Metrics</h3>
+                <button class="modal-close" id="closeMetricsModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="metricsForm" class="metrics-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Weight (kg) <span class="required">*</span></label>
+                        <input type="number" step="0.1" min="20" max="300" name="weight" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Height (cm) <span class="required">*</span></label>
+                        <input type="number" step="0.1" min="50" max="250" name="height" required>
+                    </div>
+                </div>
+                <!-- Other fields same as onboarding -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Blood Sugar (mg/dL)</label>
+                        <input type="number" step="0.1" min="0" max="500" name="blood_sugar">
+                    </div>
+                    <div class="form-group">
+                        <label>Cholesterol (mg/dL)</label>
+                        <input type="number" step="0.1" min="0" max="500" name="cholesterol">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>BP Systolic</label>
+                        <input type="number" min="50" max="250" name="bp_systolic">
+                    </div>
+                    <div class="form-group">
+                        <label>BP Diastolic</label>
+                        <input type="number" min="30" max="150" name="bp_diastolic">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary full-width">Save Metrics</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

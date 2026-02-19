@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Booking - How It Works | Medicare</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        .header h1 { font-size: 2.8rem; margin-bottom: 1rem; }
+        .header p { font-size: 1.2rem; opacity: 0.95; }
+        .content { padding: 3rem 2rem; }
+        .feature-step {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: #f8fafc;
+            border-radius: 20px;
+            border-left: 5px solid #667eea;
+        }
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .step-content h3 {
+            color: #2d3748;
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+        }
+        .step-content p {
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .demo-image {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            height: 200px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+            border: 3px dashed rgba(255,255,255,0.3);
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+        }
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.8rem;
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .feature-step { flex-direction: column; text-align: center; }
+            .header h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-user-md"></i> Doctor Booking</h1>
+            <p>How Medicare's appointment system works</p>
+        </div>
+
+        <div class="content">
+            <div class="feature-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>🔍 Search Doctors</h3>
+                    <p>Enter doctor name or specialization (Cardiology, Neurology, Pediatrics, etc.). Our smart search shows available doctors with their hospital affiliations and schedules.</p>
+                    <div class="demo-image">
+                        <i class="fas fa-search"></i> Search Interface
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>🏥 View Availability</h3>
+                    <p>Browse doctors working at multiple hospitals. See exact timings for each hospital. Choose your preferred doctor, hospital location, and available time slot.</p>
+                    <div class="demo-image">
+                        <i class="fas fa-calendar-alt"></i> Doctor Cards
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>✅ Book & Confirm</h3>
+                    <p>One-click booking! Get instant confirmation email with appointment details. Automatic reminder set in app for 3 hours before your appointment.</p>
+                    <div class="demo-image">
+                        <i class="fas fa-envelope"></i> Confirmation Screen
+                    </div>
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-search"></i></div>
+                    <h3>Smart Search</h3>
+                    <p>Find by name, specialty, hospital, or location</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-clock"></i></div>
+                    <h3>Real-time Slots</h3>
+                    <p>Live availability across all hospitals</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-envelope"></i></div>
+                    <h3>Email Confirmation</h3>
+                    <p>Instant booking confirmation</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-bell"></i></div>
+                    <h3>Smart Reminders</h3>
+                    <p>3-hour pre-appointment notifications</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

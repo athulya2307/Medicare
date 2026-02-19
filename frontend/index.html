@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicare - Your Complete Digital Healthcare Companion</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="logo.jpeg" alt="Medicare Logo" height="30px" width="30px">
+                <span>Medicare</span>
+            </div>
+            <div class="nav-links" id="navLinks">
+                <a href="index.html" class="nav-link active">Home</a>
+                <a href="doctor-booking.html" class="nav-link">Doctors</a>
+                <a href="reminders.html" class="nav-link">Reminders</a>
+                <a href="report-analysis.html" class="nav-link">Reports</a>
+                <button class="nav-btn-login" id="loginBtn">Login</button>
+                <button class="nav-btn-signup" id="signupBtn">Sign Up</button>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1>Your Complete Digital Healthcare Companion</h1>
+                <p>Track health metrics, book doctors, set reminders, and get AI-powered medical report analysis - all in one secure platform.</p>
+                
+            </div>
+            <div class="hero-image">
+                <img src="logo.jpeg" alt="Healthcare Dashboard">
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Everything You Need for Better Health</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3>Doctor Finding & Booking</h3>
+                    <p>Find nearby hospitals and doctors with Google Maps integration and book appointments instantly.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3>Smart Reminders</h3>
+                    <p>Never miss medication, appointments, or health checks with intelligent reminder system.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>AI Report Analysis</h3>
+                    <p>Upload medical reports and get simplified explanations with intelligent chatbot support.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Auth Modal -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-content" id="modalContent">
+            <!-- Dynamic content loaded by JS -->
+        </div>
+    </div>
+
+    
+
+    <script src="js/main.js"></script>
+</body>
+</html>
