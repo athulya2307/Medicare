@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Doctor Dashboard - Medicare</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      .doctor-tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+      .tab-btn-doctor {
+        padding: 1rem 2rem;
+        border: 2px solid #e5e7eb;
+        background: white;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .tab-btn-doctor.active {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+        border-color: #3b82f6;
+      }
+      .patients-grid,
+      .appointments-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+      }
+      .patient-card,
+      .appointment-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition: all 0.3s;
+      }
+      .patient-card:hover {
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+      }
+      .search-container {
+        position: relative;
+        max-width: 500px;
+        margin-bottom: 2rem;
+      }
+      .search-input {
+        width: 100%;
+        padding: 1rem 1rem 1rem 3rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 1rem;
+      }
+      .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6b7280;
+      }
+    </style>
+  </head>
+  <body class="dashboard-page doctor-dashboard">
+    <nav class="top-navbar">
+      <div class="nav-left">
+        <i class="fas fa-stethoscope"></i>
+        <span>Doctor Dashboard</span>
+      </div>
+      <div class="nav-right">
+        <div class="user-profile">
+          <img src="" alt="Profile" class="profile-img" id="profileImg" />
+          <span id="userName">Doctor</span>
+          <span class="role-badge doctor" id="userRole">Doctor</span>
+        </div>
+        <button class="btn-logout" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </nav>
+
+    <div class="dashboard-wrapper">
+      <main class="main-content">
+        <header class="page-header">
+          <h1 id="welcomeMsg">
+            Welcome back,
+            <span class="gradient-text" id="welcomeName">Doctor</span>! 👋
+          </h1>
+          <p>Manage your patients and appointments</p>
+        </header>
+
+        <div class="doctor-tabs">
+          <button class="tab-btn-doctor active" data-tab="patients">
+            Patients
+          </button>
+          <button class="tab-btn-doctor" data-tab="appointments">
+            Appointments
+          </button>
+        </div>
+
+        <!-- Patients Section -->
+        <section id="patients-section" class="tab-content active">
+          <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input
+              type="text"
+              class="search-input"
+              id="patientSearch"
+              placeholder="Search patients by name..."
+            />
+          </div>
+          <div class="patients-grid" id="patientsGrid">
+            <!-- Dynamic patient cards will be loaded here -->
+          </div>
+        </section>
+
+        <!-- Appointments Section -->
+        <section id="appointments-section" class="tab-content">
+          <div class="stats-grid">
+            <div class="stat-card primary">
+              <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+              <div class="stat-numbers">
+                <h3 id="todayAppointments">0</h3>
+                <p>Today's Appointments</p>
+              </div>
+            </div>
+            <div class="stat-card success">
+              <div class="stat-icon"><i class="fas fa-clock"></i></div>
+              <div class="stat-numbers">
+                <h3 id="totalAppointments">0</h3>
+                <p>Total Appointments</p>
+              </div>
+            </div>
+          </div>
+          <div class="appointments-grid" id="appointmentsGrid">
+            <!-- Dynamic appointment cards will be loaded here -->
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const currentUser = JSON.parse(
+          localStorage.getItem("medicare_current_user") || "{}",
+        );
+
+        if (!currentUser || currentUser.role !== "doctor") {
+          window.location.href = "login.html";
+          return;
+        }
+
+        // Load doctor data
+        loadDoctorData(currentUser);
+        loadPatients();
+        loadAppointments();
+        bindEvents();
+      });
+
+      function loadDoctorData(currentUser) {
+        document.getElementById("welcomeName").textContent = currentUser.name;
+        document.getElementById("userName").textContent = currentUser.name;
+        document.getElementById("profileImg").src =
+          currentUser.picture ||
+          `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=3b82f6&color=fff&size=40`;
+
+        document.getElementById("welcomeMsg").innerHTML =
+          `Welcome back, <span class="gradient-text">${currentUser.name}</span>! 👋`;
+      }
+
+      function bindEvents() {
+        // Tab switching
+        document.querySelectorAll(".tab-btn-doctor").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            document
+              .querySelectorAll(".tab-btn-doctor")
+              .forEach((b) => b.classList.remove("active"));
+            document
+              .querySelectorAll(".tab-content")
+              .forEach((c) => c.classList.remove("active"));
+            btn.classList.add("active");
+            document
+              .getElementById(btn.dataset.tab + "-section")
+              .classList.add("active");
+          });
+        });
+
+        // Search patients
+        document
+          .getElementById("patientSearch")
+          .addEventListener("input", filterPatients);
+
+        // Logout
+        window.logout = function () {
+          localStorage.removeItem("medicare_current_user");
+          window.location.href = "login.html";
+        };
+      }
+
+      function loadPatients() {
+        const users = JSON.parse(
+          localStorage.getItem("medicare_users") || "[]",
+        );
+        const patients = users.filter(
+          (u) => u.role === "patient" && (u.weight || u.bmi),
+        );
+
+        displayPatients(patients);
+      }
+
+      function displayPatients(patients) {
+        const grid = document.getElementById("patientsGrid");
+        grid.innerHTML = patients
+          .map(
+            (patient) => `
+      <div class="patient-card">
+        <div class="flex items-center gap-3 mb-4">
+          <img src="${patient.picture}" class="w-12 h-12 rounded-full" />
+          <div>
+            <h3 class="font-semibold text-lg">${patient.name}</h3>
+            <p class="text-sm text-gray-500">${patient.email}</p>
+          </div>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric-item">
+            <span>Weight</span>
+            <strong>${patient.weight || "N/A"} kg</strong>
+          </div>
+          <div class="metric-item">
+            <span>BMI</span>
+            <strong>${patient.bmi || "N/A"}</strong>
+          </div>
+          <div class="metric-item">
+            <span>Blood Sugar</span>
+            <strong>${patient.bloodSugar || "N/A"} mg/dL</strong>
+          </div>
+          <div class="metric-item">
+            <span>BP</span>
+            <strong>${patient.bloodPressure || "N/A"}</strong>
+          </div>
+        </div>
+        <button class="btn-primary mt-4 w-full" onclick="viewPatientDetails('${patient.email}')">
+          View Full Report
+        </button>
+      </div>
+    `,
+          )
+          .join("");
+      }
+
+      function filterPatients() {
+        const searchTerm = document
+          .getElementById("patientSearch")
+          .value.toLowerCase();
+        const users = JSON.parse(
+          localStorage.getItem("medicare_users") || "[]",
+        );
+        const patients = users.filter(
+          (u) =>
+            u.role === "patient" &&
+            u.name.toLowerCase().includes(searchTerm) &&
+            (u.weight || u.bmi),
+        );
+        displayPatients(patients);
+      }
+
+      function loadAppointments() {
+        const users = JSON.parse(
+          localStorage.getItem("medicare_users") || "[]",
+        );
+        const currentDoctorEmail = JSON.parse(
+          localStorage.getItem("medicare_current_user"),
+        ).email;
+
+        // Simulate appointments (in real app, these would come from database)
+        const today = new Date().toDateString();
+        const appointments = users
+          .filter((u) => u.role === "patient")
+          .flatMap((patient) =>
+            Array.from(
+              { length: Math.floor(Math.random() * 3) + 1 },
+              (_, i) => ({
+                id: Math.random().toString(36).substr(2, 9),
+                patientName: patient.name,
+                patientEmail: patient.email,
+                date: new Date(
+                  Date.now() + i * 24 * 60 * 60 * 1000,
+                ).toDateString(),
+                time: ["09:00", "11:30", "14:00", "16:30"][
+                  Math.floor(Math.random() * 4)
+                ],
+                status: ["Scheduled", "Confirmed", "Completed"][
+                  Math.floor(Math.random() * 3)
+                ],
+              }),
+            ),
+          )
+          .filter((apt) => apt.patientEmail !== currentDoctorEmail);
+
+        displayAppointments(appointments);
+        updateAppointmentStats(appointments, today);
+      }
+
+      function displayAppointments(appointments) {
+        const grid = document.getElementById("appointmentsGrid");
+        grid.innerHTML = appointments
+          .slice(0, 8)
+          .map(
+            (apt) => `
+      <div class="appointment-card">
+        <div class="flex justify-between items-start mb-3">
+          <div>
+            <h3 class="font-semibold">${apt.patientName}</h3>
+            <p class="text-sm text-gray-500">${apt.time} • ${apt.date}</p>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-medium ${
+            apt.status === "Scheduled"
+              ? "bg-yellow-100 text-yellow-800"
+              : apt.status === "Confirmed"
+                ? "bg-blue-100 text-blue-800"
+                : "bg-green-100 text-green-800"
+          }">${apt.status}</span>
+        </div>
+        <div class="flex gap-2">
+          <button class="btn-primary flex-1 text-sm py-2" onclick="viewPatientDetails('${apt.patientEmail}')">
+            View Profile
+          </button>
+          <button class="btn-secondary flex-1 text-sm py-2">Reschedule</button>
+        </div>
+      </div>
+    `,
+          )
+          .join("");
+      }
+
+      function updateAppointmentStats(appointments, today) {
+        const todayCount = appointments.filter(
+          (apt) => apt.date === today,
+        ).length;
+        const totalCount = appointments.length;
+
+        document.getElementById("todayAppointments").textContent = todayCount;
+        document.getElementById("totalAppointments").textContent = totalCount;
+      }
+
+      function viewPatientDetails(patientEmail) {
+        const users = JSON.parse(
+          localStorage.getItem("medicare_users") || "[]",
+        );
+        const patient = users.find((u) => u.email === patientEmail);
+
+        if (patient) {
+          alert(
+            `Patient Details:\n\nName: ${patient.name}\nEmail: ${patient.email}\nWeight: ${patient.weight || "N/A"} kg\nBMI: ${patient.bmi || "N/A"}\nBlood Sugar: ${patient.bloodSugar || "N/A"}\nBP: ${patient.bloodPressure || "N/A"}`,
+          );
+        }
+      }
+    </script>
+  </body>
+</html>
