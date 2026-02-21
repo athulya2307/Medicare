@@ -15,7 +15,7 @@
     />
   </head>
   <body class="dashboard-page">
-    <!-- Top Navbar -->
+    
     <nav class="top-navbar">
       <div class="nav-left">
         <i class="fas fa-heartbeat"></i>
@@ -24,20 +24,22 @@
       <div class="nav-right">
         <div class="user-profile">
           <img
-            src="https://ui-avatars.com/api/?name=User&background=4f46e5&color=fff&size=40"
+            src="https://ui-avatars.com/api/?name=User&background=059669&color=fff&size=40"
             alt="Profile"
             class="profile-img"
+            id="profileImg"
           />
           <span id="userName">User</span>
+          <span class="role-badge" id="userRole"></span>
         </div>
-        <button class="btn-logout">
+        <button class="btn-logout" onclick="logout()">
           <i class="fas fa-sign-out-alt"></i> Logout
         </button>
       </div>
     </nav>
 
     <div class="dashboard-wrapper">
-      <!-- LEFT Sidebar - Quick Actions -->
+      
       <aside class="quick-actions-sidebar">
         <div class="sidebar-header">
           <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
@@ -62,17 +64,17 @@
         </nav>
       </aside>
 
-      <!-- Main Content -->
+      
       <main class="main-content">
-        <!-- Welcome Header -->
+        
         <header class="page-header">
           <h1 id="welcomeMsg">
-            Welcome back! <span class="gradient-text">👋</span>
+            Welcome <span class="gradient-text" id="welcomeName">User</span>! 👋
           </h1>
           <p>Here's what's happening with your health today</p>
         </header>
 
-        <!-- Stats Cards -->
+        
         <section class="stats-section">
           <div class="stats-grid">
             <div class="stat-card primary">
@@ -80,8 +82,8 @@
                 <i class="fas fa-weight-hanging"></i>
               </div>
               <div class="stat-numbers">
-                <h3>22.5</h3>
-                <p>BMI <span>(Normal)</span></p>
+                <h3 id="bmiDisplay">0.0</h3>
+                <p>BMI <span id="bmiStatus">(Enter metrics)</span></p>
               </div>
             </div>
             <div class="stat-card success">
@@ -89,7 +91,7 @@
                 <i class="fas fa-tint"></i>
               </div>
               <div class="stat-numbers">
-                <h3>2</h3>
+                <h3>0</h3>
                 <p>Upcoming<br />Appointments</p>
               </div>
             </div>
@@ -98,7 +100,7 @@
                 <i class="fas fa-bell"></i>
               </div>
               <div class="stat-numbers">
-                <h3>3</h3>
+                <h3>0</h3>
                 <p>Pending<br />Reminders</p>
               </div>
             </div>
@@ -110,9 +112,11 @@
           <div class="metrics-card">
             <div class="card-header">
               <h2><i class="fas fa-chart-bar"></i> Update Health Metrics</h2>
-              <button class="btn-clear">Clear All</button>
+              <button class="btn-clear" onclick="clearMetrics()">
+                Clear All
+              </button>
             </div>
-            <form class="metrics-form">
+            <form class="metrics-form" onsubmit="saveMetrics(event)">
               <div class="metrics-grid">
                 <div class="metric-input">
                   <label
@@ -120,9 +124,11 @@
                   >
                   <input
                     type="number"
-                    value="65.5"
+                    id="weight"
+                    value="0"
                     step="0.1"
                     class="input-metric"
+                    oninput="calculateBMI()"
                   />
                 </div>
                 <div class="metric-input">
@@ -131,16 +137,19 @@
                   >
                   <input
                     type="number"
-                    value="165"
+                    id="height"
+                    value="0"
                     step="0.1"
                     class="input-metric"
+                    oninput="calculateBMI()"
                   />
                 </div>
                 <div class="metric-input">
                   <label><i class="fas fa-tint"></i> Blood Sugar (mg/dL)</label>
                   <input
                     type="number"
-                    value="95"
+                    id="bloodSugar"
+                    value="0"
                     step="0.1"
                     class="input-metric"
                   />
@@ -149,15 +158,22 @@
                   <label
                     ><i class="fas fa-heart"></i> BP (Systolic/Diastolic)</label
                   >
-                  <input type="text" value="120/80" class="input-metric" />
+                  <input
+                    type="text"
+                    id="bloodPressure"
+                    value="0/0"
+                    class="input-metric"
+                  />
                 </div>
               </div>
 
               <div class="bmi-preview">
-                <div class="bmi-circle normal">
+                <div class="bmi-circle normal" id="bmiCircle">
                   <div class="bmi-display">
-                    <span class="bmi-value" id="bmiValue">22.5</span>
-                    <span class="bmi-label">Normal BMI</span>
+                    <span class="bmi-value" id="bmiValue">0.0</span>
+                    <span class="bmi-label" id="bmiLabel"
+                      >Enter metrics to calculate</span
+                    >
                   </div>
                 </div>
               </div>
@@ -173,27 +189,141 @@
       </main>
     </div>
 
-    <script src="js/dashboard.js"></script>
-    <!-- Add this script at END of dashboard.html (before </body>) -->
-    <script src="js/dashboard.js"></script>
     <script>
-      // ✅ Show ZERO values for new users
+      
       document.addEventListener("DOMContentLoaded", function () {
-        const user = JSON.parse(localStorage.getItem("medicare_user") || "{}");
-        if (
-          user.metrics &&
-          Object.values(user.metrics).every((val) => val === 0)
-        ) {
-          // New user - populate ZERO values
-          document.querySelectorAll(".input-metric").forEach((input, index) => {
-            input.value = 0;
-          });
-          document.querySelector('input[type="text"]').value = "0/0";
-          document.getElementById("bmiValue").textContent = "0.0";
-          document.querySelector(".bmi-label").textContent =
-            "Enter metrics to calculate";
+        const currentUser = JSON.parse(
+          localStorage.getItem("medicare_current_user") || "{}",
+        );
+
+        if (currentUser && currentUser.name) {
+          
+          document.getElementById("welcomeName").textContent = currentUser.name;
+          document.getElementById("userName").textContent = currentUser.name;
+
+          
+          document.getElementById("profileImg").src =
+            `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=059669&color=fff&size=40`;
+
+          // Update role badge
+          if (currentUser.role) {
+            const roleBadge = document.getElementById("userRole");
+            roleBadge.textContent =
+              currentUser.role.charAt(0).toUpperCase() +
+              currentUser.role.slice(1);
+            roleBadge.className = `role-badge ${currentUser.role}`;
+          }
+
+          
+          loadMetrics();
+        } else {
+          window.location.href = "login.html";
         }
       });
+
+      function calculateBMI() {
+        const weight = parseFloat(document.getElementById("weight").value) || 0;
+        const height = parseFloat(document.getElementById("height").value) || 0;
+
+        if (weight > 0 && height > 0) {
+          const heightInMeters = height / 100;
+          const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(1);
+
+          document.getElementById("bmiValue").textContent = bmi;
+          document.getElementById("bmiDisplay").textContent = bmi;
+
+          
+          let status = "Normal";
+          let circleClass = "normal";
+          if (bmi < 18.5) {
+            status = "Underweight";
+            circleClass = "underweight";
+          } else if (bmi >= 25) {
+            status = "Overweight";
+            circleClass = "overweight";
+          }
+
+          document.getElementById("bmiLabel").textContent = status + " BMI";
+          document.getElementById("bmiStatus").textContent = `(${status})`;
+          document.getElementById("bmiCircle").className =
+            `bmi-circle ${circleClass}`;
+        }
+      }
+
+      function saveMetrics(event) {
+        event.preventDefault();
+
+        const metrics = {
+          weight: document.getElementById("weight").value,
+          height: document.getElementById("height").value,
+          bloodSugar: document.getElementById("bloodSugar").value,
+          bloodPressure: document.getElementById("bloodPressure").value,
+          bmi: document.getElementById("bmiValue").textContent,
+        };
+
+        const currentUser = JSON.parse(
+          localStorage.getItem("medicare_current_user"),
+        );
+        const users = JSON.parse(
+          localStorage.getItem("medicare_users") || "[]",
+        );
+        const userIndex = users.findIndex((u) => u.email === currentUser.email);
+
+        if (userIndex !== -1) {
+          users[userIndex].weight = metrics.weight;
+          users[userIndex].height = metrics.height;
+          users[userIndex].bloodSugar = metrics.bloodSugar;
+          users[userIndex].bloodPressure = metrics.bloodPressure;
+          users[userIndex].bmi = parseFloat(metrics.bmi);
+          localStorage.setItem("medicare_users", JSON.stringify(users));
+        }
+
+        showNotification("Metrics saved successfully!", "success");
+      }
+
+      function loadMetrics() {
+        const currentUser = JSON.parse(
+          localStorage.getItem("medicare_current_user"),
+        );
+        const users = JSON.parse(
+          localStorage.getItem("medicare_users") || "[]",
+        );
+        const user = users.find((u) => u.email === currentUser.email);
+
+        if (user) {
+          document.getElementById("weight").value = user.weight || 0;
+          document.getElementById("height").value = user.height || 0;
+          document.getElementById("bloodSugar").value = user.bloodSugar || 0;
+          document.getElementById("bloodPressure").value =
+            user.bloodPressure || "0/0";
+          document.getElementById("bmiDisplay").textContent = user.bmi || 0;
+          calculateBMI();
+        }
+      }
+
+      function clearMetrics() {
+        document.getElementById("weight").value = 0;
+        document.getElementById("height").value = 0;
+        document.getElementById("bloodSugar").value = 0;
+        document.getElementById("bloodPressure").value = "0/0";
+        calculateBMI();
+      }
+
+      function logout() {
+        localStorage.removeItem("medicare_current_user");
+        window.location.href = "login.html";
+      }
+
+      function showNotification(message, type) {
+        const notification = document.createElement("div");
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `<i class="fas fa-${type === "success" ? "check-circle" : "exclamation-triangle"}"></i> ${message}`;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+          notification.remove();
+        }, 4000);
+      }
     </script>
   </body>
 </html>

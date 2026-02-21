@@ -16,7 +16,6 @@
   </head>
   <body class="auth-page">
     <div class="auth-container">
-      <!-- Branding -->
       <div class="auth-branding">
         <div class="logo">
           <i class="fas fa-heartbeat brand-icon"></i>
@@ -36,21 +35,19 @@
         </div>
       </div>
 
-      <!-- Forms -->
       <div class="auth-forms">
         <div class="form-tabs">
           <button class="tab-btn active" onclick="showLogin()">Sign In</button>
           <button class="tab-btn" onclick="showSignup()">Sign Up</button>
         </div>
 
-        <!-- Login Form -->
         <form
           id="loginForm"
           class="auth-form active"
           onsubmit="loginUser(event)"
         >
           <div class="form-group">
-            <label>Email</label>
+            <label><i class="fas fa-envelope"></i> Email</label>
             <input
               type="email"
               id="loginEmail"
@@ -59,7 +56,7 @@
             />
           </div>
           <div class="form-group">
-            <label>Password</label>
+            <label><i class="fas fa-lock"></i> Password</label>
             <input
               type="password"
               id="loginPassword"
@@ -67,13 +64,14 @@
               required
             />
           </div>
-          <button type="submit" class="btn-primary full-width">Sign In</button>
+          <button type="submit" class="btn-primary full-width">
+            <i class="fas fa-sign-in-alt"></i> Sign In
+          </button>
         </form>
 
-        <!-- Signup Form -->
         <form id="signupForm" class="auth-form" onsubmit="signupUser(event)">
           <div class="form-group">
-            <label>Full Name</label>
+            <label><i class="fas fa-user"></i> Full Name</label>
             <input
               type="text"
               id="userName"
@@ -82,7 +80,7 @@
             />
           </div>
           <div class="form-group">
-            <label>Email</label>
+            <label><i class="fas fa-envelope"></i> Email</label>
             <input
               type="email"
               id="userEmail"
@@ -91,25 +89,26 @@
             />
           </div>
           <div class="form-group">
-            <label>User Type</label>
+            <label><i class="fas fa-user-tag"></i> User Type</label>
             <select id="userRole" required>
               <option value="">Select type</option>
-              <option value="patient">Patient</option>
-              <option value="doctor">Doctor</option>
+              <option value="patient">👤 Patient</option>
+              <option value="doctor">👨‍⚕️ Doctor</option>
+              <option value="admin">👨‍💼 Admin</option>
             </select>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>Password</label>
+              <label><i class="fas fa-lock"></i> Password</label>
               <input
                 type="password"
                 id="userPassword"
-                placeholder="Create password"
+                placeholder="Create password (6+ chars)"
                 required
               />
             </div>
             <div class="form-group">
-              <label>Confirm Password</label>
+              <label><i class="fas fa-lock-open"></i> Confirm Password</label>
               <input
                 type="password"
                 id="userConfirmPassword"
@@ -118,13 +117,12 @@
               />
             </div>
           </div>
-          <!-- ✅ CREATE ACCOUNT BUTTON - WORKS 100%! -->
           <button
             type="submit"
             class="btn-primary full-width"
             id="createAccountBtn"
           >
-            Create Account & Go to Dashboard
+            <i class="fas fa-user-plus"></i> Create Account & Go to Dashboard
           </button>
         </form>
 
@@ -132,11 +130,12 @@
           <button
             type="button"
             class="btn-google"
-            onclick="alert('Google coming soon!')"
+            id="googleSignInBtn"
+            onclick="handleGoogleSignIn()"
           >
-            Continue with Google
+            <i class="fab fa-google"></i> Continue with Google
           </button>
-          <p>
+          <p style="margin-top: 1.5rem">
             By signing up, you agree to our <a href="#">Terms</a> and
             <a href="#">Privacy Policy</a>
           </p>
@@ -144,9 +143,62 @@
       </div>
     </div>
 
-    <!-- ✅ DEAD-SIMPLE JS - NO CLASSES, NO PROBLEMS -->
     <script>
-      // Tab switching
+      const GOOGLE_USERS = [
+        {
+          name: "Athulya Ratheesh",
+          email: "athulyaratheesh01@gmail.com",
+          role: "patient",
+          picture:
+            "https://ui-avatars.com/api/?name=Athulya&background=059669&color=fff",
+        },
+        {
+          name: "Dr. Sarah Johnson",
+          email: "sarah.johnson@gmail.com",
+          role: "doctor",
+          picture:
+            "https://ui-avatars.com/api/?name=Sarah&background=059669&color=fff",
+        },
+        {
+          name: "Admin Manager",
+          email: "admin.medicare@gmail.com",
+          role: "admin",
+          picture:
+            "https://ui-avatars.com/api/?name=Admin&background=059669&color=fff",
+        },
+        {
+          name: "Dr. Rajesh Kumar",
+          email: "rajesh.kumar@gmail.com",
+          role: "doctor",
+          picture:
+            "https://ui-avatars.com/api/?name=Rajesh&background=059669&color=fff",
+        },
+        {
+          name: "Priya Sharma",
+          email: "priya.sharma@gmail.com",
+          role: "patient",
+          picture:
+            "https://ui-avatars.com/api/?name=Priya&background=059669&color=fff",
+        },
+      ];
+
+      function handleGoogleSignIn() {
+        const btn = document.getElementById("googleSignInBtn");
+        const originalText = btn.innerHTML;
+
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+          let user =
+            GOOGLE_USERS.find(
+              (u) => u.email === "athulyaratheesh01@gmail.com",
+            ) || GOOGLE_USERS[Math.floor(Math.random() * GOOGLE_USERS.length)];
+
+          saveUserAndRedirect(user.name, user.role, user.email, user.picture);
+        }, 1500);
+      }
+
       function showLogin() {
         document.getElementById("loginForm").style.display = "block";
         document.getElementById("signupForm").style.display = "none";
@@ -161,18 +213,31 @@
         document.querySelectorAll(".tab-btn")[1].classList.add("active");
       }
 
-      // ✅ LOGIN - Works instantly
       function loginUser(event) {
         event.preventDefault();
         const email = document.getElementById("loginEmail").value;
-        saveUserAndRedirect(email, "patient", "Welcome User");
+
+        const users = JSON.parse(
+          localStorage.getItem("medicare_users") || "[]",
+        );
+        const user = users.find((u) => u.email === email);
+
+        if (user) {
+          saveUserAndRedirect(
+            user.name,
+            user.role,
+            user.email,
+            user.picture || getAvatarUrl(user.name),
+          );
+          showNotification("Welcome back " + user.name + "!", "success");
+        } else {
+          showNotification("User not found! Please sign up first.", "error");
+        }
       }
 
-      // ✅ SIGNUP - Create Account → Dashboard DIRECTLY
       function signupUser(event) {
         event.preventDefault();
 
-        // Get values
         const name = document.getElementById("userName").value;
         const email = document.getElementById("userEmail").value;
         const role = document.getElementById("userRole").value;
@@ -181,7 +246,6 @@
           "userConfirmPassword",
         ).value;
 
-        // Validation
         if (
           !name ||
           !email ||
@@ -189,33 +253,43 @@
           password.length < 6 ||
           password !== confirmPassword
         ) {
-          alert(
-            "Please check: All fields required, password 6+ chars, passwords match!",
+          showNotification(
+            "All fields required, password 6+ chars, passwords match!",
+            "error",
           );
-          return false;
+          return;
         }
 
-        // ✅ GO TO DASHBOARD with ZERO values
-        saveUserAndRedirect(email, role, name);
+        const users = JSON.parse(
+          localStorage.getItem("medicare_users") || "[]",
+        );
+        if (users.find((u) => u.email === email)) {
+          showNotification("User already exists! Please sign in.", "error");
+          return;
+        }
+
+        const picture = getAvatarUrl(name);
+        saveUserAndRedirect(name, role, email, picture);
       }
 
-      // ✅ SAVE USER + DASHBOARD (ZERO metrics for new users)
-      function saveUserAndRedirect(email, role, name) {
+      function saveUserAndRedirect(name, role, email, picture) {
         const btn =
           document.getElementById("createAccountBtn") ||
-          event.target.querySelector('button[type="submit"]');
-        const originalText = btn.innerHTML;
+          document.getElementById("googleSignInBtn");
 
-        // Loading
-        btn.innerHTML =
-          'Creating Account... <i class="fas fa-spinner fa-spin"></i>';
-        btn.disabled = true;
+        btn.innerHTML = 'Redirecting... <i class="fas fa-arrow-right"></i>';
+        btn.style.background = "#10b981";
 
-        // ✅ NEW USER with ZERO METRICS
-        const newUser = {
+        const users = JSON.parse(
+          localStorage.getItem("medicare_users") || "[]",
+        );
+        const existingUserIndex = users.findIndex((u) => u.email === email);
+
+        const userData = {
           name: name,
           email: email,
           role: role,
+          picture: picture,
           weight: 0,
           height: 0,
           bloodSugar: 0,
@@ -224,18 +298,42 @@
           created: new Date().toLocaleString(),
         };
 
-        localStorage.setItem("medicare_user", JSON.stringify(newUser));
+        if (existingUserIndex === -1) {
+          users.push(userData);
+        } else {
+          users[existingUserIndex] = userData;
+        }
+        localStorage.setItem("medicare_users", JSON.stringify(users));
 
-        // Success
-        btn.innerHTML = "✅ Account Created! Redirecting...";
-        btn.style.background = "#10b981";
+        localStorage.setItem(
+          "medicare_current_user",
+          JSON.stringify({
+            name: name,
+            email: email,
+            role: role,
+            picture: picture,
+          }),
+        );
 
-        console.log("✅ User saved:", newUser);
-
-        // ✅ DIRECT DASHBOARD - NO DELAY!
         setTimeout(() => {
           window.location.href = "dashboard.html";
         }, 1200);
+      }
+
+      function getAvatarUrl(name) {
+        return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=059669&color=fff&size=40`;
+      }
+
+      function showNotification(message, type) {
+        const notification = document.createElement("div");
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `<i class="fas fa-${type === "success" ? "check-circle" : "exclamation-triangle"}"></i> ${message}`;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+          notification.style.animation = "slideInRight 0.5s reverse";
+          setTimeout(() => notification.remove(), 500);
+        }, 4000);
       }
     </script>
   </body>

@@ -5,6 +5,19 @@ class MedicareDashboard {
     }
 
     init() {
+        
+        const roleBadge = document.getElementById('userRoleBadge');
+        if (roleBadge && this.user.role) {
+            const roles = {
+                patient: '👤 Patient',
+                doctor: '👨‍⚕️ Doctor', 
+                admin: '👨‍💼 Admin'
+            };
+            roleBadge.textContent = roles[this.user.role];
+            roleBadge.style.display = 'inline';
+            roleBadge.className = `role-badge ${this.user.role}`;
+        }
+
         if (!this.user.name) {
             window.location.href = 'login.html';
             return;

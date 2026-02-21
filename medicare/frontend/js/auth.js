@@ -5,16 +5,16 @@ class MedicareAuth {
 
     init() {
         this.bindEvents();
-        this.switchTab('login'); // Default to login
+        this.switchTab('login'); 
     }
 
     bindEvents() {
-        // Store original button text
+        
         document.querySelectorAll('.auth-form button[type="submit"]').forEach(btn => {
             btn.dataset.originalText = btn.innerHTML;
         });
 
-        // ✅ FIXED: Direct event listeners - NO DELEGATION ISSUES
+        
         document.getElementById('loginForm').addEventListener('submit', (e) => {
             e.preventDefault();
             this.handleLogin(e);
@@ -25,12 +25,12 @@ class MedicareAuth {
             this.handleSignup(e);
         });
         
-        // Tab switching
+        
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', () => this.switchTab(btn.dataset.tab));
         });
 
-        // Google button
+        
         const googleBtn = document.querySelector('.btn-google');
         if (googleBtn) {
             googleBtn.addEventListener('click', () => {
@@ -40,11 +40,11 @@ class MedicareAuth {
     }
 
     switchTab(tabName) {
-        // Remove active classes
+        
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
         
-        // Add active to selected
+        
         document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
         document.getElementById(`${tabName}Form`).classList.add('active');
     }
@@ -66,7 +66,7 @@ class MedicareAuth {
     handleSignup(e) {
         const form = e.target;
         
-        // ✅ FIXED: Get form fields DIRECTLY from event target
+        
         const nameInput = form.querySelector('input[type="text"]');
         const emailInput = form.querySelectorAll('input[type="email"]')[1];
         const roleSelect = form.querySelector('select');
@@ -80,7 +80,7 @@ class MedicareAuth {
         
         console.log('Signup data:', { name, email, role, password1: '***', password2: '***' }); // Debug
         
-        // Validation
+        
         if (!name || !email || !role || !password1 || !password2) {
             this.showError('Please fill all fields!');
             return;
@@ -98,19 +98,19 @@ class MedicareAuth {
             return;
         }
         
-        // ✅ WORKS: Process signup
+        
         this.processLogin(email, role, name);
     }
 
     processLogin(email, role, name) {
-        // ✅ FIXED: Get button from CURRENT form (not event.target)
+        
         const currentForm = document.querySelector('.auth-form.active');
         const button = currentForm.querySelector('button[type="submit"]');
         
         this.showLoading(button);
 
         setTimeout(() => {
-            // Save COMPLETE user data
+            
             const userData = {
                 name: name.charAt(0).toUpperCase() + name.slice(1).toLowerCase(),
                 email: email.toLowerCase(),
@@ -124,7 +124,7 @@ class MedicareAuth {
             this.hideLoading(button);
             this.showSuccess(button);
             
-            // ✅ 100% REDIRECTS to dashboard
+           
             setTimeout(() => {
                 window.location.href = 'dashboard.html';
             }, 1500);
@@ -153,7 +153,7 @@ class MedicareAuth {
     }
 
     showNotification(message, type = 'success') {
-        // Remove existing notifications
+       
         document.querySelectorAll('.notification').forEach(n => n.remove());
         
         const notification = document.createElement('div');
@@ -172,7 +172,6 @@ class MedicareAuth {
     }
 }
 
-// ✅ START when page loads
 document.addEventListener('DOMContentLoaded', () => {
     console.log('✅ Auth script loaded');
     new MedicareAuth();
