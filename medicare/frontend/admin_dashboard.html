@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - Medicare</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    /* Admin Dashboard Specific Styles */
+    .admin-tabs { 
+      display: flex; 
+      gap: 1rem; 
+      margin-bottom: 3rem; 
+      overflow-x: auto; 
+    }
+    .admin-tab { 
+      padding: 1rem 2rem; 
+      background: #f8fafc; 
+      border: 2px solid #f1f5f9; 
+      border-radius: 20px; 
+      cursor: pointer; 
+      font-weight: 700; 
+      transition: all 0.3s ease; 
+      white-space: nowrap; 
+    }
+    .admin-tab.active { 
+      background: var(--primary-solid); 
+      color: white; 
+      border-color: var(--primary-solid); 
+      box-shadow: var(--shadow); 
+    }
+    .admin-form { display: none; }
+    .admin-form.active { display: block; animation: slideInUp 0.5s ease-out; }
+    .doctor-list { 
+      display: grid; 
+      gap: 1.5rem; 
+      margin-top: 2rem; 
+    }
+    .doctor-card { 
+      background: white; 
+      border-radius: 20px; 
+      padding: 2rem; 
+      box-shadow: var(--shadow); 
+      border-left: 5px solid var(--secondary); 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      flex-wrap: wrap; 
+      gap: 1rem; 
+    }
+    .doctor-info h4 { 
+      margin: 0 0 0.5rem 0; 
+      color: var(--dark); 
+    }
+    .doctor-info p { 
+      margin: 0; 
+      color: #6b7280; 
+    }
+    .doctor-actions button { 
+      padding: 0.6rem 1.5rem; 
+      margin-left: 0.5rem; 
+      border-radius: 12px; 
+      font-weight: 700; 
+      cursor: pointer; 
+      transition: all 0.3s ease; 
+    }
+    .btn-edit { background: var(--primary-solid); color: white; border: none; }
+    .btn-delete { background: var(--danger); color: white; border: none; }
+    .btn-approve { background: var(--secondary); color: white; border: none; }
+    .form-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+      gap: 2rem; 
+    }
+    @media (max-width: 768px) {
+      .admin-tabs { flex-direction: column; }
+      .doctor-card { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body class="dashboard-page">
+  <!-- Top Navbar -->
+  <nav class="top-navbar">
+    <div class="nav-left">
+      <i class="fas fa-shield-alt"></i>
+      <span>Admin Dashboard</span>
+    </div>
+    <div class="nav-right">
+      <div class="user-profile">
+        <img src="https://ui-avatars.com/api/?name=Admin&background=ef4444&color=fff&size=48" alt="Profile" class="profile-img" />
+        <span id="userName">Admin User</span>
+      </div>
+      <button class="btn-logout">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </nav>
+
+  <div class="dashboard-wrapper">
+    <!-- Quick Actions Sidebar -->
+    <aside class="quick-actions-sidebar">
+      <div class="sidebar-header">
+        <h3><i class="fas fa-cogs"></i> Admin Tools</h3>
+      </div>
+      <nav class="quick-actions-nav">
+        <a href="#" class="action-item active" data-action="doctors">
+          <i class="fas fa-user-md"></i>
+          <span>Manage Doctors</span>
+        </a>
+        <a href="#" class="action-item" data-action="patients">
+          <i class="fas fa-users"></i>
+          <span>Manage Patients</span>
+        </a>
+        <a href="#" class="action-item" data-action="analytics">
+          <i class="fas fa-chart-pie"></i>
+          <span>Analytics</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="page-header">
+        <h1 id="welcomeMsg">Doctor Management <span class="gradient-text">⚙️</span></h1>
+        <p>Add, edit, and approve doctors</p>
+      </header>
+
+      <!-- Admin Tabs -->
+      <div class="admin-tabs">
+        <div class="admin-tab active" data-tab="add-doctor">Add Doctor</div>
+        <div class="admin-tab" data-tab="manage-doctors">Manage Doctors</div>
+      </div>
+
+      <!-- Add Doctor Form -->
+      <section class="admin-form active" id="addDoctorForm">
+        <div class="metrics-card">
+          <h2><i class="fas fa-user-plus"></i> Add New Doctor</h2>
+          <form class="form-grid" id="addDoctorFormElement">
+            <div class="form-group">
+              <label><i class="fas fa-user"></i> Full Name</label>
+              <input type="text" id="doctorName" placeholder="Dr. John Smith" required />
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-envelope"></i> Email</label>
+              <input type="email" id="doctorEmail" placeholder="doctor@example.com" required />
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-phone"></i> Phone</label>
+              <input type="tel" id="doctorPhone" placeholder="+1 234 567 8900" />
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-stethoscope"></i> Specialty</label>
+              <input type="text" id="doctorSpecialty" placeholder="Cardiology" required />
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-map-marker-alt"></i> Hospital/Clinic</label>
+              <input type="text" id="doctorHospital" placeholder="City Hospital" />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary btn-large">
+                <i class="fas fa-plus"></i> Add Doctor
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Manage Doctors List -->
+      <section class="admin-form" id="manageDoctorsForm">
+        <div class="metrics-card">
+          <div class="card-header">
+            <h2><i class="fas fa-user-md"></i> Doctors List</h2>
+            <button class="btn-clear" onclick="adminDashboard.refreshDoctors()">Refresh</button>
+          </div>
+          <div class="doctor-list" id="doctorsList">
+            <!-- Dynamic doctors will load here -->
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/admin_dashboard.js"></script>
+</body>
+</html>

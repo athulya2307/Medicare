@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doctor Dashboard - Medicare</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    /* Doctor Dashboard Specific Styles */
+    .search-section { margin-bottom: 3rem; }
+    .search-box { 
+      position: relative; 
+      max-width: 500px; 
+      margin: 0 auto 2rem; 
+    }
+    .search-input { 
+      width: 100%; 
+      padding: 1.5rem 5rem 1.5rem 2rem; 
+      border: 3px solid var(--border); 
+      border-radius: 25px; 
+      font-size: 1.1rem; 
+      background: white; 
+      transition: all 0.4s ease; 
+    }
+    .search-input:focus { 
+      outline: none; 
+      border-color: var(--primary-solid); 
+      box-shadow: 0 0 0 5px rgba(79, 70, 229, 0.1); 
+      transform: translateY(-2px); 
+    }
+    .search-btn { 
+      position: absolute; 
+      right: 1rem; 
+      top: 50%; 
+      transform: translateY(-50%); 
+      background: var(--primary); 
+      color: white; 
+      border: none; 
+      padding: 0.75rem 1.5rem; 
+      border-radius: 20px; 
+      cursor: pointer; 
+      font-weight: 700; 
+    }
+    .no-results { 
+      text-align: center; 
+      padding: 4rem 2rem; 
+      color: #6b7280; 
+    }
+    .patient-card { 
+      background: white; 
+      border-radius: 24px; 
+      padding: 2.5rem; 
+      box-shadow: var(--shadow); 
+      margin-bottom: 2rem; 
+      border-top: 5px solid var(--primary-solid); 
+    }
+    .patient-header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-bottom: 2rem; 
+      flex-wrap: wrap; 
+      gap: 1rem; 
+    }
+    .metrics-grid-doctor { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+      gap: 1.5rem; 
+      margin: 2rem 0; 
+    }
+    .metric-item { 
+      background: #f8fafc; 
+      padding: 1.5rem; 
+      border-radius: 16px; 
+      text-align: center; 
+      border-right: 4px solid var(--primary-solid); 
+    }
+    .metric-value { 
+      font-size: 2rem; 
+      font-weight: 800; 
+      color: var(--dark); 
+      display: block; 
+    }
+    .metric-label { 
+      color: #6b7280; 
+      font-weight: 600; 
+      margin-top: 0.25rem; 
+    }
+    .reports-list { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+      gap: 1.5rem; 
+    }
+    .report-card { 
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); 
+      padding: 2rem; 
+      border-radius: 20px; 
+      border-left: 5px solid var(--secondary); 
+      transition: all 0.3s ease; 
+    }
+    .report-card:hover { 
+      transform: translateX(10px); 
+      box-shadow: var(--shadow-lg); 
+    }
+    @media (max-width: 768px) {
+      .patient-header { justify-content: center; text-align: center; }
+      .metrics-grid-doctor { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="dashboard-page">
+  <!-- Top Navbar -->
+  <nav class="top-navbar">
+    <div class="nav-left">
+      <i class="fas fa-stethoscope"></i>
+      <span>Doctor Dashboard</span>
+    </div>
+    <div class="nav-right">
+      <div class="user-profile">
+        <img src="https://ui-avatars.com/api/?name=Dr&background=10b981&color=fff&size=48" alt="Profile" class="profile-img" />
+        <span id="userName">Dr. Smith</span>
+      </div>
+      <button class="btn-logout">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </nav>
+
+  <div class="dashboard-wrapper">
+    <!-- Quick Actions Sidebar -->
+    <aside class="quick-actions-sidebar">
+      <div class="sidebar-header">
+        <h3><i class="fas fa-search"></i> Doctor Tools</h3>
+      </div>
+      <nav class="quick-actions-nav">
+        <a href="#" class="action-item active" data-action="search-patients">
+          <i class="fas fa-users"></i>
+          <span>Search Patients</span>
+        </a>
+        <a href="#" class="action-item" data-action="today-appointments">
+          <i class="fas fa-calendar-check"></i>
+          <span>Today's Appointments</span>
+        </a>
+        <a href="#" class="action-item" data-action="prescriptions">
+          <i class="fas fa-prescription-bottle-alt"></i>
+          <span>Prescriptions</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="page-header">
+        <h1 id="welcomeMsg">Patient Management <span class="gradient-text">🔍</span></h1>
+        <p>Search and view patient medical history</p>
+      </header>
+
+      <!-- Search Section -->
+      <section class="search-section">
+        <div class="search-box">
+          <input 
+            type="text" 
+            class="search-input" 
+            id="patientSearch" 
+            placeholder="Search patients by name or email..."
+          />
+          <button class="search-btn" onclick="doctorDashboard.searchPatients()">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- Patient Results -->
+      <section class="metrics-section" id="patientResults" style="display: none;">
+        <div class="metrics-card">
+          <div class="card-header">
+            <h2><i class="fas fa-user-md"></i> Patient Medical Records</h2>
+            <button class="btn-clear" onclick="doctorDashboard.clearSearch()">Clear</button>
+          </div>
+          <div id="patientContent">
+            <div class="no-results">
+              <i class="fas fa-users" style="font-size: 4rem; color: #d1d5db; margin-bottom: 1rem;"></i>
+              <h3>No patients found</h3>
+              <p>Search for a patient to view their medical history and metrics</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/doctor_dashboard.js"></script>
+</body>
+</html>
