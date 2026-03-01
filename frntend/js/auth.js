@@ -119,7 +119,7 @@ class MedicareAuth {
             };
             
             localStorage.setItem('medicare_user', JSON.stringify(userData));
-            console.log('✅ SAVED USER:', userData);
+            console.log('âœ… SAVED USER:', userData);
             
             this.hideLoading(button);
             this.showSuccess(button);
@@ -173,6 +173,6 @@ class MedicareAuth {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('✅ Auth script loaded');
+    console.log('âœ… Auth script loaded');
     new MedicareAuth();
 });
