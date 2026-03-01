@@ -97,6 +97,22 @@
               <option value="admin">👨‍💼 Admin</option>
             </select>
           </div>
+          <div
+            class="form-group"
+            id="doctorSpecializationGroup"
+            style="display: none"
+          >
+            <label><i class="fas fa-stethoscope"></i> Specialization</label>
+            <select id="doctorSpecialization">
+              <option value="">Select specialization</option>
+              <option value="Cardiologist">Cardiologist</option>
+              <option value="Dermatologist">Dermatologist</option>
+              <option value="Neurologist">Neurologist</option>
+              <option value="Pediatrician">Pediatrician</option>
+              <option value="Orthopedic">Orthopedic</option>
+              <option value="General Physician">General Physician</option>
+            </select>
+          </div>
           <div class="form-row">
             <div class="form-group">
               <label><i class="fas fa-lock"></i> Password</label>
@@ -356,6 +372,19 @@
           setTimeout(() => notification.remove(), 500);
         }, 4000);
       }
+      // Show specialization only if doctor selected
+      document
+        .getElementById("userRole")
+        .addEventListener("change", function () {
+          const specGroup = document.getElementById(
+            "doctorSpecializationGroup",
+          );
+          if (this.value === "doctor") {
+            specGroup.style.display = "block";
+          } else {
+            specGroup.style.display = "none";
+          }
+        });
     </script>
   </body>
 </html>

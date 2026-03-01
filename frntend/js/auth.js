@@ -70,11 +70,13 @@ class MedicareAuth {
         const nameInput = form.querySelector('input[type="text"]');
         const emailInput = form.querySelectorAll('input[type="email"]')[1];
         const roleSelect = form.querySelector('select');
+        const specializationSelect = document.getElementById('doctorSpecialization');
         const passwordInputs = form.querySelectorAll('input[type="password"]');
         
         const name = nameInput.value.trim();
         const email = emailInput.value.trim();
         const role = roleSelect.value;
+        const specialization = specializationSelect ? specializationSelect.value : null;
         const password1 = passwordInputs[0].value;
         const password2 = passwordInputs[1].value;
         
@@ -83,6 +85,10 @@ class MedicareAuth {
         
         if (!name || !email || !role || !password1 || !password2) {
             this.showError('Please fill all fields!');
+            return;
+        }
+        if (role === 'doctor' && !specialization) {
+            this.showError('Please select specialization!');
             return;
         }
         
@@ -99,10 +105,10 @@ class MedicareAuth {
         }
         
         
-        this.processLogin(email, role, name);
+        this.processLogin(email, role, name, specialization);
     }
 
-    processLogin(email, role, name) {
+    processLogin(email, role, name, specialization = null) {
         
         const currentForm = document.querySelector('.auth-form.active');
         const button = currentForm.querySelector('button[type="submit"]');
@@ -115,6 +121,7 @@ class MedicareAuth {
                 name: name.charAt(0).toUpperCase() + name.slice(1).toLowerCase(),
                 email: email.toLowerCase(),
                 role: role,
+                specialization: role === 'doctor' ? specialization : null,
                 timestamp: new Date().toISOString()
             };
             
